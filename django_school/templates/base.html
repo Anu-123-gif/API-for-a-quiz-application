@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}Django School{% endblock %}</title>
+    <title>{% block title %}Edfox{% endblock %}</title>
     <link rel="icon" href="{% static 'img/favicon.png' %}">
     <!-- <link href="https://fonts.googleapis.com/css?family=Clicker+Script" rel="stylesheet"> -->
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
@@ -26,7 +26,7 @@
             <div class="col-6">
               <h1 class="logo">
                 <a href="{% url 'home' %}">
-                  Django School
+                  Edfox
                   {% if user.is_authenticated %}
                     {% if user.is_teacher %}
                       <span class="icon-feather" data-toggle="tooltip" data-placement="right" title="Teacher profile"></span>
@@ -60,13 +60,7 @@
               {% endblock %}
             </div>
           </div>
-          <footer>
-            <a href="https://simpleisbetterthancomplex.com">© SimpleIsBetterThanComplex.com</a>
-            /
-            <a href="https://simpleisbetterthancomplex.com/tutorial/2018/01/18/how-to-implement-multiple-user-types-with-django.html">Read more about this example</a>
-            /
-            <a href="https://github.com/suhailvs/django-schools/">GitHub repository</a>
-          </footer>
+        
         </div>
       </div>
     </div>

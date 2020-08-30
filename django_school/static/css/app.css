@@ -3,7 +3,7 @@
 }
 
 .logo a {
-  color: #212529;
+  color: #fff3cd;
   text-decoration: none;
 }
 
@@ -46,8 +46,8 @@ footer a {
 
 .btn-teacher {
   color: #fff;
-  background-color: #8980a5;
-  border-color: #8980a5;
+  background-color: #8980a6;
+  border-color: #8980a6;
 }
 
 .btn-teacher:hover,
