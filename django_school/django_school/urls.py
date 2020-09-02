@@ -10,7 +10,7 @@ from rest_framework.authtoken import views
 
 router = DefaultRouter()
 router.register("login", classroom.LoginViewSet, basename="login")
-
+router.register("profile", classroom.UserProfileViewSet)
 
 
 urlpatterns = [

@@ -11,6 +11,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+from classroom import serializers
+from classroom import models
+from rest_framework import filters
 
 class SignUpView(TemplateView):
     template_name = 'registration/signup.html'
@@ -35,3 +38,13 @@ class LoginViewSet(viewsets.ViewSet):
         """Use the ObtainAuthToken APIView to validate and create a token. """
 
         return ObtainAuthToken().post(request)
+
+class UserProfileViewSet(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profiles."""
+
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.User.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    #permission_classes = (permissions.UpdateOwnProfile,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("username")
