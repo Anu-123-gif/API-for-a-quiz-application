@@ -14,6 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from classroom import serializers
 from classroom import models
 from rest_framework import filters
+from django.db import transaction
 
 class SignUpView(TemplateView):
     template_name = 'registration/signup.html'
@@ -48,3 +49,24 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     #permission_classes = (permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("username")
+
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.is_student = True
+        user.save()
+        student = Student.objects.create(user=user)
+        #student.interests.add(*self.cleaned_data.get('interests'))
+        return user
+
+
+def home(request):
+    if request.user.is_authenticated:
+        if request.user.is_teacher:
+            return redirect('teachers:quiz_change_list')
+        elif request.user.is_student:
+            return redirect('students:quiz_list')
+        else:
+            return redirect('admin:index')
+    return render(request, 'classroom/home.html')

@@ -16,12 +16,25 @@ from ..decorators import student_required
 from ..forms import StudentInterestsForm, StudentSignUpForm, TakeQuizForm
 from ..models import Quiz, Student, TakenQuiz, Question
 
+from classroom import serializers
+from classroom import models
+from rest_framework import filters
+from django.db import transaction
+from rest_framework import viewsets
+from rest_framework.authentication import TokenAuthentication
+
 User = get_user_model()
 
 class StudentSignUpView(CreateView):
     model = User
     form_class = StudentSignUpForm
     template_name = 'registration/signup_form.html'
+    serializer_class = serializers.UserProfileSerializer
+    queryset = models.User.objects.all()
+    authentication_classes = (TokenAuthentication,)
+    #permission_classes = (permissions.UpdateOwnProfile,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ("username")
 
     def get_context_data(self, **kwargs):
         kwargs['user_type'] = 'student'
@@ -31,6 +44,11 @@ class StudentSignUpView(CreateView):
         user = form.save()
         login(self.request, user)
         return redirect('students:quiz_list')
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = UserProfileSerializer(instance=instance)
+        return Response(serializer.data)
 
 
 @method_decorator([login_required, student_required], name='dispatch')
@@ -74,7 +92,7 @@ class QuizListView(ListView):
 class QuizResultsView(View):
     template_name = 'classroom/students/quiz_result.html'
 
-    def get(self, request, *args, **kwargs):        
+    def get(self, request, *args, **kwargs):
         quiz = Quiz.objects.get(id = kwargs['pk'])
         taken_quiz = TakenQuiz.objects.filter(student = request.user.student, quiz = quiz)
         if not taken_quiz:
@@ -83,9 +101,9 @@ class QuizResultsView(View):
             """
             return render(request, '404.html')
         questions = Question.objects.filter(quiz =quiz)
-        
+
         # questions = self.form_class(initial=self.initial)
-        return render(request, self.template_name, {'questions':questions, 
+        return render(request, self.template_name, {'questions':questions,
             'quiz':quiz, 'percentage': taken_quiz[0].percentage})
 
 
@@ -169,5 +187,3 @@ class StudentList(ListView):
             # ).filter(full_name__icontains = query)
             queryset = queryset.filter(user__username__icontains = query)
         return queryset
-
-    
