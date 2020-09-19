@@ -16,6 +16,10 @@ from classroom import models
 from rest_framework import filters
 from django.db import transaction
 
+def index(request) :
+    print(request.headers);
+    return request(request, 'classroom/home.html');
+
 class SignUpView(TemplateView):
     template_name = 'registration/signup.html'
 

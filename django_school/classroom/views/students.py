@@ -27,11 +27,11 @@ User = get_user_model()
 
 class StudentSignUpView(CreateView):
     model = User
-    form_class = StudentSignUpForm
     template_name = 'registration/signup_form.html'
-    serializer_class = serializers.UserProfileSerializer
+    form_class = StudentSignUpForm
+    #serializer_class = serializers.UserProfileSerializer
     queryset = models.User.objects.all()
-    authentication_classes = (TokenAuthentication,)
+    #authentication_classes = (TokenAuthentication,)
     #permission_classes = (permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ("username")
