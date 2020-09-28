@@ -22,34 +22,27 @@ from rest_framework import filters
 from django.db import transaction
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
+from django.http import JsonResponse
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.authtoken.views import ObtainAuthToken
+
+from rest_framework.decorators import api_view
+from rest_framework import viewsets
+from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
-class StudentSignUpView(CreateView):
-    model = User
-    template_name = 'registration/signup_form.html'
-    form_class = StudentSignUpForm
-    #serializer_class = serializers.UserProfileSerializer
+class StudentSignUpView(viewsets.ModelViewSet):
+    """Handles creating, reading and updating profiles."""
+
+    serializer_class = serializers.UserProfileSerializer
     queryset = models.User.objects.all()
-    #authentication_classes = (TokenAuthentication,)
-    #permission_classes = (permissions.UpdateOwnProfile,)
+    authentication_classes = (TokenAuthentication,)
+#    permission_classes = (permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ("username")
-
-    def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'student'
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return redirect('students:quiz_list')
-
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = UserProfileSerializer(instance=instance)
-        return Response(serializer.data)
-
+    search_fields = ("name", "email", "username")
+#    token, _ = Token.objects.get_or_create(user=user)
 
 @method_decorator([login_required, student_required], name='dispatch')
 class StudentInterestsView(UpdateView):

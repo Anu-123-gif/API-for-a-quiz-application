@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from . import models
-
+from classroom.models import (Answer, Question, Student, StudentAnswer,
+                              Subject, User)
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """A serializer for our user profile objects."""
 
     class Meta:
-        model = models.User
+        model = User
         fields = ("id", "username", "password")
         extra_kwargs = {"password": {"write_only": True}}
 
@@ -14,11 +14,13 @@ class UserProfileSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Create and return a new user."""
 
-        user = models.User(
+        user = User(
             username=validated_data["username"],
         )
 
+        user.is_student = True
         user.set_password(validated_data["password"])
         user.save()
+        student = Student.objects.create(user=user)
 
         return user
